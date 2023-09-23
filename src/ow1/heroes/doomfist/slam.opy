@@ -6,7 +6,7 @@ playervar proto_indicator_slam_position
 playervar indicator_slam_position
 playervar indicator_slam_direction
 playervar slam_damage
-playervar slam_damage_text_entity
+playervar slam_damage_text_entities
 playervar slammed_victims
 
 playervar indicator_entity
@@ -204,23 +204,33 @@ rule "[doomfist/slam.opy]: Calculate slam damage based on air time":
 def createSlamDamageGui():
     @Name "[doomfist/slam.opy]: createSlamDamageGui()"
 
-    if eventPlayer.slam_damage_text_entity != null: return
+    if eventPlayer.slam_damage_text_entities != null: return
     createInWorldText(eventPlayer, "{0}".format(floor(eventPlayer.slam_damage)), 
-                      updateEveryTick(eventPlayer.getEyePosition() + (100 * (0 * worldVector(Vector.RIGHT, eventPlayer, Transform.ROTATION) + ((0 - 0.2) * (angleToDirection(horizontalAngleOfDirection(eventPlayer.getFacingDirection()), 
+                      updateEveryTick(eventPlayer.getEyePosition() + (100 * (0 * worldVector(Vector.RIGHT, eventPlayer, Transform.ROTATION) + ((0 - 0.25) * (angleToDirection(horizontalAngleOfDirection(eventPlayer.getFacingDirection()), 
                                       verticalAngleOfDirection(eventPlayer.getFacingDirection()) - 90))) + 3 * eventPlayer.getFacingDirection()))), 
                                       2, 
                                       Clip.NONE, 
                                       WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, 
                                       Color.WHITE, 
                                       SpecVisibility.DEFAULT)
-    eventPlayer.slam_damage_text_entity = getLastCreatedText()
+    eventPlayer.slam_damage_text_entities[0] = getLastCreatedText()
+    createInWorldText(eventPlayer, "〔    〕", 
+                      updateEveryTick(eventPlayer.getEyePosition() + (100 * (0 * worldVector(Vector.RIGHT, eventPlayer, Transform.ROTATION) + ((0 - 0.25) * (angleToDirection(horizontalAngleOfDirection(eventPlayer.getFacingDirection()), 
+                                      verticalAngleOfDirection(eventPlayer.getFacingDirection()) - 90))) + 3 * eventPlayer.getFacingDirection()))), 
+                                      3, 
+                                      Clip.NONE, 
+                                      WorldTextReeval.VISIBILITY_POSITION_STRING_AND_COLOR, 
+                                      Color.WHITE, 
+                                      SpecVisibility.DEFAULT)
+    eventPlayer.slam_damage_text_entities[1] = getLastCreatedText()
 
 
 def destroySlamDamageGui():
     @Name "[doomfist/slam.opy]: destroySlamDamageGui()"
 
-    destroyInWorldText(eventPlayer.slam_damage_text_entity)
-    eventPlayer.slam_damage_text_entity = null
+    destroyInWorldText(eventPlayer.slam_damage_text_entities[0])
+    destroyInWorldText(eventPlayer.slam_damage_text_entities[1])
+    eventPlayer.slam_damage_text_entities = null
 
 
 # Need more permanent/robust solution
